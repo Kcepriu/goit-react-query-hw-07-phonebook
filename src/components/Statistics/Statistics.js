@@ -1,38 +1,35 @@
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ResultStatistics from './ResultStatistics/ResultStatistics';
+import Notification from 'components/Notification';
 
-class Statistics extends Component {
-  static propTypes = {
-    goodValue: PropTypes.number.isRequired,
-    neutralValue: PropTypes.number.isRequired,
-    badValue: PropTypes.number.isRequired,
-  };
+const Statistics = ({ goodValue, neutralValue, badValue }) => {
+  const totalResult = goodValue + neutralValue + badValue;
 
-  render() {
-    const totalResult =
-      this.props.goodValue + this.props.neutralValue + this.props.badValue;
+  const positiveResult = totalResult
+    ? Math.round((goodValue / totalResult) * 100)
+    : 0;
 
-    const positiveResult = totalResult
-      ? Math.round((this.props.goodValue / totalResult) * 100)
-      : 0;
+  return (
+    <div className="Statistics">
+      {totalResult ? (
+        <ResultStatistics
+          goodValue={goodValue}
+          neutralValue={neutralValue}
+          badValue={badValue}
+          totalResult={totalResult}
+          positiveResult={positiveResult}
+        />
+      ) : (
+        <Notification message="There is no feedback" />
+      )}
+    </div>
+  );
+};
 
-    return (
-      <div className="Statistics">
-        {totalResult ? (
-          <ResultStatistics
-            goodValue={this.props.goodValue}
-            neutralValue={this.props.neutralValue}
-            badValue={this.props.badValue}
-            totalResult={totalResult}
-            positiveResult={positiveResult}
-          />
-        ) : (
-          <p>There is no feedback</p>
-        )}
-      </div>
-    );
-  }
-}
+Statistics.propTypes = {
+  goodValue: PropTypes.number.isRequired,
+  neutralValue: PropTypes.number.isRequired,
+  badValue: PropTypes.number.isRequired,
+};
 
 export default Statistics;
