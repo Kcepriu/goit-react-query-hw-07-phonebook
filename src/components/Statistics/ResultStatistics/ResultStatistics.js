@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { ListStatistics, ValueStatistic } from './ResultStatistics.styled';
 
 const ResultStatistics = ({
   goodValue,
@@ -8,23 +9,23 @@ const ResultStatistics = ({
   positiveResult,
 }) => {
   return (
-    <ul>
+    <ListStatistics>
       <li key="good" className="Statistics__result">
-        Good: {goodValue}
+        Good: <ValueStatistic>{goodValue}</ValueStatistic>
       </li>
       <li key="neutral" className="Statistics__result">
-        Neutral: {neutralValue}
+        Neutral: <ValueStatistic>{neutralValue}</ValueStatistic>
       </li>
       <li key="bad" className="Statistics__result">
-        Bad: {badValue}
+        Bad: <ValueStatistic>{badValue}</ValueStatistic>
       </li>
       <li key="total" className="Statistics__result">
-        Total: {totalResult}
+        Total: <ValueStatistic>{totalResult}</ValueStatistic>
       </li>
       <li key="total_positiva" className="Statistics__result">
-        Possitive feedback: {positiveResult}%
+        Possitive feedback: <ValueStatistic>{positiveResult}%</ValueStatistic>
       </li>
-    </ul>
+    </ListStatistics>
   );
 };
 
