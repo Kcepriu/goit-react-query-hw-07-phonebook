@@ -6,6 +6,7 @@ import ListContacts from './ListContacts';
 import Filter from './Filter';
 
 import { TitlePhonebook, TitleContacts, Container } from './App.style';
+import { saveData, loadData } from './services';
 class App extends Component {
   state = {
     contacts: [
@@ -16,6 +17,18 @@ class App extends Component {
     ],
     filter: '',
   };
+
+  componentDidMount() {
+    this.setState({
+      contacts: loadData(),
+    });
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      saveData(this.state.contacts);
+    }
+  }
 
   findContactByName = userName => {
     const { contacts } = this.state;
