@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 
 import Phonebook from './Phonebook';
@@ -7,31 +7,13 @@ import Filter from './Filter';
 
 import { TitlePhonebook, TitleContacts, Container } from './App.style';
 import { saveData, loadData } from './services';
-class App extends Component {
-  state = {
-    contacts: [
-      // { id: 'id-1', userName: 'Rosie Simpson', number: '459-12-56' },
-      // { id: 'id-2', userName: 'Hermione Kline', number: '443-89-12' },
-      // { id: 'id-3', userName: 'Eden Clements', number: '645-17-79' },
-      // { id: 'id-4', userName: 'Annie Copeland', number: '227-91-26' },
-    ],
-    filter: '',
-  };
 
-  componentDidMount() {
-    this.setState({
-      contacts: loadData(),
-    });
-  }
+const App = () => {
+  const [contacts, setContacts] = useState(loadData()); // Читаю збережені дані при першому рендері!!!!!!!
+  const [visibleContacts, setVisibleContacts] = useState([]);
+  const [filter, setFilter] = useState('');
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      saveData(this.state.contacts);
-    }
-  }
-
-  findContactByName = userName => {
-    const { contacts } = this.state;
+  const findContactByName = userName => {
     const textFilter = userName.toUpperCase();
 
     return contacts.find(
@@ -40,61 +22,71 @@ class App extends Component {
   };
 
   // * Handlers
-  handlerSubmitPhonebook = ([userName, number]) => {
-    if (this.findContactByName(userName)) {
+  const handlerSubmitPhonebook = ([userName, number]) => {
+    if (findContactByName(userName)) {
       alert(`${userName} is already in contacts`);
       return;
     }
 
-    this.setState(prevState => {
-      return {
-        contacts: [...prevState.contacts, { userName, number, id: nanoid() }],
-      };
-    });
+    setContacts(prevState => [
+      ...prevState,
+      { userName, number, id: nanoid() },
+    ]);
+
     return true;
   };
 
-  handlerOnChangeFilter = event => {
-    this.setState({
-      filter: event.currentTarget.value,
-    });
+  const handlerOnChangeFilter = event => {
+    setFilter(event.currentTarget.value);
   };
 
-  handlerDeleteContact = event => {
-    const { contacts } = this.state;
+  const handlerDeleteContact = event => {
     const id = event.currentTarget.name;
     const newContacts = contacts.filter(element => element.id !== id);
 
-    this.setState({
-      contacts: [...newContacts],
-    });
+    setContacts(newContacts);
   };
 
-  render() {
-    const { contacts, filter } = this.state;
+  // * useEffect
+  // * Save contacts to LocalStorage
+  useEffect(() => {
+    saveData(contacts);
+  }, [contacts]);
+
+  //TODO Микита, Глянь на оцей кусок коду.
+  //! Чи доцільно було visibleContacts пхати в стейти ?
+  //! Чи можна було б запхати в якусь локальну змінну типу
+  //! const visibleContacts = contacts.filter(element => element.userName.toUpperCase().includes(filter.toUpperCase()) );
+  //! як правильніше, бо робить і так і так.
+  // -
+  // * Update VisibleContacts
+  useEffect(() => {
     const textFilter = filter.toUpperCase();
-    const visibleContacts = contacts.filter(element =>
-      element.userName.toUpperCase().includes(textFilter)
-    );
 
-    return (
-      <Container className="App">
-        <TitlePhonebook>Phonebook</TitlePhonebook>
-        <Phonebook onSubmit={this.handlerSubmitPhonebook} />
-
-        {contacts.length > 0 && (
-          <>
-            <Filter onChange={this.handlerOnChangeFilter} value={filter} />
-            <TitleContacts>Contacts</TitleContacts>
-            <ListContacts
-              contacts={visibleContacts}
-              onDelete={this.handlerDeleteContact}
-            />
-          </>
-        )}
-      </Container>
+    setVisibleContacts(
+      contacts.filter(element =>
+        element.userName.toUpperCase().includes(textFilter)
+      )
     );
-  }
-}
+  }, [filter, contacts]);
+
+  return (
+    <Container className="App">
+      <TitlePhonebook>Phonebook</TitlePhonebook>
+      <Phonebook onSubmit={handlerSubmitPhonebook} />
+
+      {contacts.length > 0 && (
+        <>
+          <Filter onChange={handlerOnChangeFilter} value={filter} />
+          <TitleContacts>Contacts</TitleContacts>
+          <ListContacts
+            contacts={visibleContacts}
+            onDelete={handlerDeleteContact}
+          />
+        </>
+      )}
+    </Container>
+  );
+};
 
 export default App;
