@@ -40,7 +40,7 @@ class App extends Component {
   };
 
   // * Handlers
-  handlerSubmitPhonebook = ({ userName, number }) => {
+  handlerSubmitPhonebook = ([userName, number]) => {
     if (this.findContactByName(userName)) {
       alert(`${userName} is already in contacts`);
       return;

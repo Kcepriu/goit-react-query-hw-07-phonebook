@@ -17,8 +17,6 @@ function loadData() {
     restoredSession = [];
   }
 
-  console.log(restoredSession);
-
   return restoredSession || [];
 }
 
