@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { nanoid } from 'nanoid';
 
 import Phonebook from './Phonebook';
@@ -9,8 +9,9 @@ import { TitlePhonebook, TitleContacts, Container } from './App.style';
 import { saveData, loadData } from './services';
 
 const App = () => {
-  const [contacts, setContacts] = useState(loadData()); // Читаю збережені дані при першому рендері!!!!!!!
-  const [visibleContacts, setVisibleContacts] = useState([]);
+  const [contacts, setContacts] = useState(loadData); // Читаю збережені дані при першому рендері!!!!!!! Треба передати саме посилання на функцію, або зробити анонамну функцію,
+  // const [contacts, setContacts] = useState(loadData()); // НЕПРАВИЛЬНО!!! бо кожден рендер буде дборгати її
+
   const [filter, setFilter] = useState('');
 
   const findContactByName = userName => {
@@ -53,20 +54,9 @@ const App = () => {
     saveData(contacts);
   }, [contacts]);
 
-  //TODO Микита, Глянь на оцей кусок коду.
-  //! Чи доцільно було visibleContacts пхати в стейти ?
-  //! Чи можна було б запхати в якусь локальну змінну типу
-  //! const visibleContacts = contacts.filter(element => element.userName.toUpperCase().includes(filter.toUpperCase()) );
-  //! як правильніше, бо робить і так і так.
-  // -
-  // * Update VisibleContacts
-  useEffect(() => {
-    const textFilter = filter.toUpperCase();
-
-    setVisibleContacts(
-      contacts.filter(element =>
-        element.userName.toUpperCase().includes(textFilter)
-      )
+  const visibleContacts = useMemo(() => {
+    return contacts.filter(element =>
+      element.userName.toUpperCase().includes(filter.toUpperCase())
     );
   }, [filter, contacts]);
 
