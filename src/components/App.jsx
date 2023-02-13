@@ -54,6 +54,7 @@ const App = () => {
     saveData(contacts);
   }, [contacts]);
 
+  // ! Я розумію що для моого списку контактів це зайве, али використаю, бо забудуся що є така функція.
   const visibleContacts = useMemo(() => {
     return contacts.filter(element =>
       element.userName.toUpperCase().includes(filter.toUpperCase())
