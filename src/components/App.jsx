@@ -55,11 +55,16 @@ const App = () => {
   }, [contacts]);
 
   // ! Я розумію що для моого списку контактів це зайве, али використаю, бо забудуся що є така функція.
-  const visibleContacts = useMemo(() => {
-    return contacts.filter(element =>
-      element.userName.toUpperCase().includes(filter.toUpperCase())
-    );
-  }, [filter, contacts]);
+  // ! не треба бо тмоємо тільки два значення  filter і contacts які перередрюють компонент
+  // const visibleContacts = useMemo(() => {
+  //   return contacts.filter(element =>
+  //     element.userName.toUpperCase().includes(filter.toUpperCase())
+  //   );
+  // }, [filter, contacts]);
+
+  const visibleContacts = contacts.filter(element =>
+    element.userName.toUpperCase().includes(filter.toUpperCase())
+  );
 
   return (
     <Container className="App">
