@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 
 import Phonebook from './Phonebook';
@@ -6,12 +6,45 @@ import ListContacts from './ListContacts';
 import Filter from './Filter';
 
 import { TitlePhonebook, TitleContacts, Container } from './App.style';
-import { saveData, loadData } from './services';
 
-const App = () => {
-  const [contacts, setContacts] = useState(loadData); // Читаю збережені дані при першому рендері!!!!!!! Треба передати саме посилання на функцію, або зробити анонамну функцію,
+const NAME_STORAGE = 'Contacts_Phonebook';
+
+function useLocalStorage(naneStorage) {
+  const [value, setValue] = useState(loadData); // Читаю збережені дані при першому рендері!!!!!!! Треба передати саме посилання на функцію, або зробити анонамну функцію,
   // const [contacts, setContacts] = useState(loadData()); // НЕПРАВИЛЬНО!!! бо кожден рендер буде дборгати її
 
+  function loadData() {
+    let restoredSession = [];
+    try {
+      restoredSession = JSON.parse(localStorage.getItem(naneStorage));
+    } catch {
+      console.log('Error local');
+      restoredSession = [];
+    }
+
+    return restoredSession || [];
+  }
+
+  // * useEffect
+  // * Save contacts to LocalStorage
+  useEffect(() => {
+    function saveData(data) {
+      try {
+        const serializedState = JSON.stringify(data);
+        localStorage.setItem(naneStorage, serializedState);
+      } catch (error) {
+        console.error('Set state error: ', error.message);
+      }
+    }
+
+    saveData(value);
+  }, [value, naneStorage]);
+
+  return [value, setValue];
+}
+
+const App = () => {
+  const [contacts, setContacts] = useLocalStorage(NAME_STORAGE);
   const [filter, setFilter] = useState('');
 
   const findContactByName = userName => {
@@ -47,12 +80,6 @@ const App = () => {
 
     setContacts(newContacts);
   };
-
-  // * useEffect
-  // * Save contacts to LocalStorage
-  useEffect(() => {
-    saveData(contacts);
-  }, [contacts]);
 
   // ! Я розумію що для моого списку контактів це зайве, али використаю, бо забудуся що є така функція.
   // ! не треба бо тмоємо тільки два значення  filter і contacts які перередрюють компонент
