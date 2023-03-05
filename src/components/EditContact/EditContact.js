@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Label } from './EditContact.styled';
-import { saveContact } from 'reduxe/sliceContacts';
+import { saveContact, editContact } from 'reduxe/sliceContacts';
 import { getContacts } from 'reduxe/selectors';
 import { useState } from 'react';
 
@@ -43,6 +43,10 @@ const EditContact = ({ contact }) => {
     setNewNumber(event.target.value);
   };
 
+  const handlerCancel = () => {
+    dispatcher(editContact(contact.id));
+  };
+
   return (
     <Form onSubmit={handlerSave}>
       <Label htmlFor="userName">
@@ -72,6 +76,9 @@ const EditContact = ({ contact }) => {
         />
       </Label>
       <button type="submit">Save</button>
+      <button type="button" onClick={handlerCancel}>
+        Cancel
+      </button>
     </Form>
   );
 };
