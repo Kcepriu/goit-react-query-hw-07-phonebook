@@ -1,35 +1,29 @@
-import PropTypes from 'prop-types';
-import { Contact, ContactList } from './ListContacts.styled';
+import { useSelector } from 'react-redux';
+import { getContacts, getFilter } from 'reduxe/selectors';
 
-const ListContacts = ({ contacts, onDelete }) => {
-  return (
-    <>
-      <ContactList>
-        {contacts.map(element => {
-          const { id, userName, number } = element;
-          return (
-            <Contact key={id} className="Statistics__result">
-              {userName}: {number}
-              <button type="button" name={id} onClick={onDelete}>
-                Delete
-              </button>
-            </Contact>
-          );
-        })}
-      </ContactList>
-    </>
+import { ContactList } from './ListContacts.styled';
+import Contact from 'components/Contact/Contact';
+import EditContact from 'components/EditContact/EditContact';
+
+const ListContacts = () => {
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
+
+  const visibleContacts = contacts.filter(element =>
+    element.name.toUpperCase().includes(filter.toUpperCase())
   );
-};
 
-ListContacts.propType = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.exact({
-      id: PropTypes.string.isRequired,
-      userName: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  onDelete: PropTypes.func.is,
+  return (
+    <ContactList>
+      {visibleContacts.map(contact => {
+        if (!contact.edit) {
+          return <Contact key={contact.id} contact={contact} />;
+        } else {
+          return <EditContact key={contact.id} contact={contact} />;
+        }
+      })}
+    </ContactList>
+  );
 };
 
 export default ListContacts;
