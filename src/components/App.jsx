@@ -21,9 +21,9 @@ const App = () => {
     dispatch(fetchAllContacts());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (!error) alert('ERROR services');
-  }, [error]);
+  // useEffect(() => {
+  //   if (!error) alert('ERROR services');
+  // }, [error]);
 
   return (
     <Container className="App">
