@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Label } from './EditContact.styled';
-import { saveContact, editContact } from 'reduxe/sliceContacts';
+import { editContact } from 'reduxe/sliceContacts';
 import { getContacts } from 'reduxe/selectors';
-import { useState } from 'react';
+import { changeContacts } from 'reduxe/operation';
 
 const findContactByNameAndId = (contacts, userName, id) => {
   const textFilter = userName.toUpperCase();
@@ -16,7 +17,7 @@ const EditContact = ({ contact }) => {
   const contacts = useSelector(getContacts);
   const dispatcher = useDispatch();
   const [newName, setNewName] = useState(contact.name);
-  const [newNumber, setNewNumber] = useState(contact.number);
+  const [newNumber, setNewNumber] = useState(contact.phone);
 
   const handlerSave = event => {
     event.preventDefault();
@@ -26,11 +27,13 @@ const EditContact = ({ contact }) => {
       return;
     }
 
+    // dispatcher(editContact(contact.id));
+    // TODO save to API
     dispatcher(
-      saveContact({
+      changeContacts({
         id: contact.id,
         name: newName,
-        number: newNumber,
+        phone: newNumber,
       })
     );
   };
@@ -86,8 +89,8 @@ const EditContact = ({ contact }) => {
 EditContact.propType = {
   contact: PropTypes.exact({
     id: PropTypes.string.isRequired,
-    userName: PropTypes.string.isRequired,
-    number: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
     edit: PropTypes.bool,
   }).isRequired,
 };

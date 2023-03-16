@@ -1,13 +1,29 @@
+import { useDispatch, useSelector } from 'react-redux';
 import AddContact from './AddContact/AddContact';
 import ListContacts from './ListContacts/ListContacts';
 import Filter from './Filter/Filter';
+import Spinner from './Spinner/Spinner';
 
 import { TitlePhonebook, TitleContacts, Container } from './App.style';
-import { useSelector } from 'react-redux';
-import { getContacts } from 'reduxe/selectors';
+
+import { getContacts, getError, getIsLoading } from 'reduxe/selectors';
+import { fetchAllContacts } from 'reduxe/operation';
+import { useEffect } from 'react';
 
 const App = () => {
   const contacts = useSelector(getContacts);
+  const isLoading = useSelector(getIsLoading);
+  const error = useSelector(getError);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAllContacts());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!error) alert('ERROR services');
+  }, [error]);
 
   return (
     <Container className="App">
@@ -21,6 +37,8 @@ const App = () => {
           <ListContacts />
         </>
       )}
+
+      {isLoading && !error && <Spinner />}
     </Container>
   );
 };

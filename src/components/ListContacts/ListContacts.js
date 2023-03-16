@@ -7,6 +7,7 @@ import EditContact from 'components/EditContact/EditContact';
 
 const ListContacts = () => {
   const contacts = useSelector(getContacts);
+
   const filter = useSelector(getFilter);
 
   const visibleContacts = contacts.filter(element =>

@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { getContacts } from 'reduxe/selectors';
-import { addContact } from 'reduxe/sliceContacts';
+import { addContacts } from 'reduxe/operation';
 import { Form, Label, Button } from './AddContact.styled';
 
 const findContactByName = (contacts, userName) => {
@@ -18,7 +18,7 @@ const AddContact = () => {
       return;
     }
 
-    dispatcher(addContact(newContact));
+    dispatcher(addContacts(newContact));
 
     return true;
   };
@@ -26,6 +26,7 @@ const AddContact = () => {
   const handleSubmit = event => {
     event.preventDefault();
     const form = event.target;
+
     const newContact = {
       name: form.elements.name.value,
       number: form.elements.number.value,

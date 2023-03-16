@@ -1,22 +1,19 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { WrapContact } from './Contact.styled';
-import { deleteContact, editContact } from 'reduxe/sliceContacts';
+import { editContact } from 'reduxe/sliceContacts';
+import { deleteContacts } from 'reduxe/operation';
 
 const Contact = ({ contact }) => {
   const dispatcher = useDispatch();
 
-  const handlerDelete = () => {
-    dispatcher(deleteContact(contact.id));
-  };
+  const handlerDelete = () => dispatcher(deleteContacts(contact.id));
 
-  const handlerEdit = () => {
-    dispatcher(editContact(contact.id));
-  };
+  const handlerEdit = () => dispatcher(editContact(contact.id));
 
   return (
     <WrapContact>
-      {contact.name}: {contact.number}
+      {contact.name}: {contact.phone}
       <button type="button" onClick={handlerDelete}>
         Delete
       </button>
@@ -30,8 +27,8 @@ const Contact = ({ contact }) => {
 Contact.propType = {
   contact: PropTypes.exact({
     id: PropTypes.string.isRequired,
-    userName: PropTypes.string.isRequired,
-    number: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
     edit: PropTypes.bool,
   }).isRequired,
 };
