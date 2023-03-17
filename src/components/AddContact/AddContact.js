@@ -20,7 +20,7 @@ const AddContact = () => {
 
     const newContact = {
       name: form.elements.name.value,
-      number: form.elements.number.value,
+      phone: form.elements.phone.value,
     };
 
     if (findContactByName(contacts, newContact.name)) {
@@ -52,7 +52,7 @@ const AddContact = () => {
           Number
           <input
             type="tel"
-            name="number"
+            name="phone"
             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
