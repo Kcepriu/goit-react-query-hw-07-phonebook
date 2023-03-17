@@ -1,5 +1,5 @@
 import { Form, Label, Button } from './AddContact.styled';
-
+import Spinner from 'components/Spinner/Spinner';
 import {
   useGetContactsQuery,
   useAddContactsMutation,
@@ -12,7 +12,7 @@ const findContactByName = (contacts, userName) => {
 
 const AddContact = () => {
   const { data: contacts } = useGetContactsQuery();
-  const [addContacts] = useAddContactsMutation();
+  const [addContacts, result] = useAddContactsMutation();
 
   const handleSubmit = async event => {
     event.preventDefault();
@@ -60,6 +60,7 @@ const AddContact = () => {
         </Label>
         <Button type="submit">Add contact</Button>
       </Form>
+      {result.isLoading && !result.error && <Spinner />}
     </>
   );
 };
