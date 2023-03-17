@@ -1,26 +1,30 @@
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 import { WrapContact } from './Contact.styled';
-import { editContact } from 'reduxe/sliceContacts';
-import { deleteContacts } from 'reduxe/operation';
+import { useDeleteContactsMutation } from 'reduxe/sliceContacts';
 
-const Contact = ({ contact }) => {
-  const dispatcher = useDispatch();
-
-  const handlerDelete = () => dispatcher(deleteContacts(contact.id));
-
-  const handlerEdit = () => dispatcher(editContact(contact.id));
+const Contact = ({ contact, handlerEditionContact }) => {
+  const [deleteContacts, result] = useDeleteContactsMutation();
 
   return (
-    <WrapContact>
-      {contact.name}: {contact.phone}
-      <button type="button" onClick={handlerDelete}>
-        Delete
-      </button>
-      <button type="button" onClick={handlerEdit}>
-        Edit
-      </button>
-    </WrapContact>
+    <>
+      <WrapContact>
+        {contact.name}: {contact.phone}
+        <button
+          type="button"
+          onClick={() => deleteContacts(contact.id)}
+          disabled={result.isLoading}
+        >
+          Delete
+        </button>
+        <button
+          type="button"
+          onClick={() => handlerEditionContact(true)}
+          disabled={result.isLoading}
+        >
+          Edit
+        </button>
+      </WrapContact>
+    </>
   );
 };
 
@@ -31,6 +35,7 @@ Contact.propType = {
     phone: PropTypes.string.isRequired,
     edit: PropTypes.bool,
   }).isRequired,
+  handlerEditionContact: PropTypes.func.isRequired,
 };
 
 export default Contact;

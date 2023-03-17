@@ -1,78 +1,58 @@
-import { createSlice } from '@reduxjs/toolkit';
-import {
-  fetchAllContacts,
-  deleteContacts,
-  addContacts,
-  changeContacts,
-} from './operation';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const handlePending = state => {
-  state.isLoading = true;
-};
+export const contactsApi = createApi({
+  reducerPath: 'contacts',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://64130b41b1ea74430320cd5f.mockapi.io/avi/v2/',
+  }),
+  endpoints: builder => ({
+    //* FETCH ALL contact
+    getContacts: builder.query({
+      query: () => `/contacts`,
+      // transformResponse: (response: { data: Post }, meta, arg) => response.data,
+      providesTags: ['Contact'],
+    }),
+    //* FETCH  contact BY id
+    getContactById: builder.query({
+      query: contactId => `/contacts/${contactId}`,
+      providesTags: ['Contact'],
+    }),
 
-const handleRejected = (state, action) => {
-  state.isLoading = false;
-  state.error = action.payload;
-};
+    // * ADD
+    addContacts: builder.mutation({
+      query: contact => ({
+        url: `/contacts`,
+        method: 'POST',
+        body: contact,
+      }),
+      invalidatesTags: ['Contact'],
+    }),
 
-const contactsSlice = createSlice({
-  name: 'contacts',
-  initialState: {
-    items: [],
-    isLoading: false,
-    error: null,
-  },
-  reducers: {
-    editContact(state, action) {
-      for (const contact of state.items) {
-        if (contact.id === action.payload) {
-          contact.edit = !contact.edit;
-          break;
-        }
-      }
-    },
-  },
-  extraReducers: {
-    // * Fetch contacts
-    [fetchAllContacts.pending]: handlePending,
-    [fetchAllContacts.rejected]: handleRejected,
-    [fetchAllContacts.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
-      state.items = action.payload;
-    },
-    // * Delete Contact
-    [deleteContacts.pending]: handlePending,
-    [deleteContacts.rejected]: handleRejected,
-    [deleteContacts.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
-      state.items = state.items.filter(
-        contact => contact.id !== action.payload.id
-      );
-    },
-    // * ADD contact
-    [addContacts.pending]: handlePending,
-    [addContacts.rejected]: handleRejected,
-    [addContacts.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
-      state.items.push(action.payload);
-    },
-    // * changeContact
-    [changeContacts.pending]: handlePending,
-    [changeContacts.rejected]: handleRejected,
-    [changeContacts.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
+    // * Delete
+    deleteContacts: builder.mutation({
+      query: contactId => ({
+        url: `/contacts/${contactId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Contact'],
+    }),
 
-      const index = state.items.findIndex(
-        contact => contact.id === action.payload.id
-      );
-      state.items.splice(index, 1, action.payload);
-    },
-  },
+    // * Edit contact
+    editContacts: builder.mutation({
+      query: contact => ({
+        url: `/contacts/${contact.id}`,
+        method: 'PUT',
+        body: contact,
+      }),
+      invalidatesTags: ['Contact'],
+    }),
+  }),
 });
 
-export const { editContact } = contactsSlice.actions;
-export const contactsReducer = contactsSlice.reducer;
+export const {
+  useGetContactsQuery,
+  useGetContactByIdQuery,
+  useAddContactsMutation,
+  useDeleteContactsMutation,
+  useEditContactsMutation,
+} = contactsApi;

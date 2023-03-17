@@ -1,7 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'reduxe/selectors';
-import { addContacts } from 'reduxe/operation';
 import { Form, Label, Button } from './AddContact.styled';
+
+import {
+  useGetContactsQuery,
+  useAddContactsMutation,
+} from 'reduxe/sliceContacts';
 
 const findContactByName = (contacts, userName) => {
   const textFilter = userName.toUpperCase();
@@ -9,21 +11,10 @@ const findContactByName = (contacts, userName) => {
 };
 
 const AddContact = () => {
-  const contacts = useSelector(getContacts);
-  const dispatcher = useDispatch();
+  const { data: contacts } = useGetContactsQuery();
+  const [addContacts] = useAddContactsMutation();
 
-  const addnewContact = (contacts, newContact) => {
-    if (findContactByName(contacts, newContact.name)) {
-      alert(`${newContact.name} is already in contacts`);
-      return;
-    }
-
-    dispatcher(addContacts(newContact));
-
-    return true;
-  };
-
-  const handleSubmit = event => {
+  const handleSubmit = async event => {
     event.preventDefault();
     const form = event.target;
 
@@ -32,7 +23,14 @@ const AddContact = () => {
       number: form.elements.number.value,
     };
 
-    addnewContact(contacts, newContact) && form.reset();
+    if (findContactByName(contacts, newContact.name)) {
+      alert(`${newContact.name} is already in contacts`);
+      return;
+    }
+
+    await addContacts(newContact);
+
+    form.reset();
   };
 
   return (
